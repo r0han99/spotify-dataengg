@@ -19,7 +19,7 @@ def maketitle():
 
     st.markdown(html, unsafe_allow_html=True)
 
-def makesubtitle(text, size="30px", color='g'):
+def makesubtitle(text, size="30px", color='g', weight='regular'):
 
     global Black
     global Green
@@ -36,7 +36,7 @@ def makesubtitle(text, size="30px", color='g'):
 
     
     
-    st.markdown(f'''<span style="font-family: 'Circular Std'; font-size: {size}; color: {color};">{text}</span>''', unsafe_allow_html=True)
+    st.markdown(f'''<span style="font-family: 'Circular Std'; font-size: {size}; color: {color}; font-weight: {weight}">{text}</span>''', unsafe_allow_html=True)
 
 
 
@@ -48,7 +48,7 @@ def main_cs():
 
 
     with st.sidebar:
-        makesubtitle("Control shelf ⏭️")
+        makesubtitle("Control shelf ⏭️", weight='bold')
 
     st.sidebar.divider()
 
