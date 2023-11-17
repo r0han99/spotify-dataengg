@@ -50,8 +50,7 @@ def makesubtitle(text, size="30px", color='g', weight='regular'):
 def main_cs():
 
 
-    
-
+    setfonts()
     maketitle()
 
 
