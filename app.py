@@ -19,6 +19,12 @@ def maketitle():
 
     st.markdown(html, unsafe_allow_html=True)
 
+
+def setfonts():
+
+    with open( "./src/style.css" ) as css:
+        st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+
 def makesubtitle(text, size="30px", color='g', weight='regular'):
 
     global Black
@@ -43,6 +49,8 @@ def makesubtitle(text, size="30px", color='g', weight='regular'):
 # main interface -- app starts here
 def main_cs():
 
+
+    
 
     maketitle()
 
