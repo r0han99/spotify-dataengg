@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .wrapper {
+            height: 1vh;
+            display: grid;
+            place-items: center;
+        }
+
+        .typing-demo {
+            width: 81ch;
+            animation: typing 2s steps(100), blink .5s step-end infinite alternate;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 2px solid;
+            font-weight: regular;
+            font-family: "Circular Std";
+        }
+
+        @keyframes typing {
+            from {
+                width: 0
+            }
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: transparent
+            }
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="wrapper">
+        <div class="typing-demo">
+            <span style="font-size: 20px; color: #191414; font-weight: bold;">This is the,</span>
+            <span style="font-size: 50px; color:#1DB954; font-weight:bold;">Inferential Spotify Dashboard</span>
+        </div>
+    </div>
+
+</body>
+</html>
