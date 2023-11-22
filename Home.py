@@ -65,19 +65,15 @@ def main_cs():
     SPOTIPY_CLIENT_SECRET = client_secret
     
 
-    # Initialize the Spotify client
-    # sp = spotipy.Spotify(
-    #     auth_manager=SpotifyOAuth(
-    #         client_id=SPOTIPY_CLIENT_ID,
-    #         client_secret=SPOTIPY_CLIENT_SECRET,
-    #         redirect_uri="http://localhost:8080/callback",
-    #         scope='user-library-read user-library-modify playlist-read-private playlist-modify-private',
-    #     )
-    # )
-
-    # Initialize the Spotify client using Client Credentials Flow
-    client_credentials_manager = SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET)
-    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+    #Initialize the Spotify client
+    sp = spotipy.Spotify(
+        auth_manager=SpotifyOAuth(
+            client_id=SPOTIPY_CLIENT_ID,
+            client_secret=SPOTIPY_CLIENT_SECRET,
+            redirect_uri="https://inferential-spotify-dashboard.streamlit.app/",
+            scope='user-library-read user-library-modify playlist-read-private playlist-modify-private',
+        )
+    )
 
 
     with st.sidebar:
