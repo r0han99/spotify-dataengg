@@ -27,6 +27,49 @@ def load_keys():
     return keys
 
 
+
+
+def get_token():
+
+    client_id, client_secret = load_keys()
+
+    # Instantiate Object
+    SPOTIPY_CLIENT_ID = client_id
+    SPOTIPY_CLIENT_SECRET = client_secret
+    SPOTIPY_REDIRECT_URI = 'localhost:8051'
+    SCOPE= 'user-library-read user-library-modify playlist-read-private playlist-modify-private'
+
+    #Initialize the Spotify client
+    sp = spotipy.Spotify(
+        auth_manager=SpotifyOAuth(
+            client_id=SPOTIPY_CLIENT_ID,
+            client_secret=SPOTIPY_CLIENT_SECRET,
+            redirect_uri=SPOTIPY_REDIRECT_URI,
+            scope=SCOPE,
+        )
+    )
+    token_info = None
+    try:
+        token_info = st.session_state['token_info']
+    except KeyError:
+        pass
+
+    if token_info and time.time() < token_info['expires_at']:
+        print("Found cached token!")
+        return token_info['access_token']
+
+    sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SCOPE)
+    url = sp_oauth.get_authorize_url()
+    st.write('Please log in here:', url)
+
+    if 'code' in st.experimental_get_query_params():
+        code = st.experimental_get_query_params()['code'][0]
+        token_info = sp_oauth.get_access_token(code)
+        st.session_state['token_info'] = token_info
+        return token_info['access_token']
+    
+    return sp
+
 def fetch_song_meta(sp):
 
     # Get the current user's username
@@ -40,14 +83,34 @@ def fetch_song_meta(sp):
 
     if search_results and search_results['tracks']['items']:
         track = search_results['tracks']['items'][0]
-        st.code(f"Track: {track['name']} by {', '.join([artist['name'] for artist in track['artists']])}")
+        # Get album information
+        st.write(track)
+        album_info = sp.album(track['album']['id'])
+        track_id = track['id']
+        cols = st.columns(2)
+
+        with cols[0]:
+            makesubtitle(f"{track['name']} by {', '.join([artist['name'] for artist in track['artists']])}", color='b',weight='bold')
+            #st.code(f"Track: {track['name']} by {', '.join([artist['name'] for artist in track['artists']])}")
+            album_art_url = album_info['images'][0]['url']
+            st.image(album_art_url, width=450)
+
+        # Get album art URL
+        with cols[1]:
+            
+            
+            # Get audio features for the track
+            audio_features = sp.audio_features([track['uri']])[0]
+            st.code(f"Audio Features for {track['name']}:")
+            st.code(f"Danceability: {audio_features['danceability']}")
+            st.code(f"Energy: {audio_features['energy']}")
+            st.code(f"Tempo: {audio_features['tempo']}")
+
         
-        # Get audio features for the track
-        audio_features = sp.audio_features([track['uri']])[0]
-        st.code(f"Audio Features for {track['name']}:")
-        st.code(f"Danceability: {audio_features['danceability']}")
-        st.code(f"Energy: {audio_features['energy']}")
-        st.code(f"Tempo: {audio_features['tempo']}")
+
+        
+
+        
     else:
         st.warning(f"No track found with the name '{track_name}'")
 
@@ -58,22 +121,7 @@ def main_cs():
 
     setfonts()
     maketitle()
-    client_id, client_secret = load_keys()
-
-    # Instantiate Object
-    SPOTIPY_CLIENT_ID = client_id
-    SPOTIPY_CLIENT_SECRET = client_secret
     
-
-    #Initialize the Spotify client
-    sp = spotipy.Spotify(
-        auth_manager=SpotifyOAuth(
-            client_id=SPOTIPY_CLIENT_ID,
-            client_secret=SPOTIPY_CLIENT_SECRET,
-            redirect_uri="https://inferential-spotify-dashboard.streamlit.app/",
-            scope='user-library-read user-library-modify playlist-read-private playlist-modify-private',
-        )
-    )
 
 
     with st.sidebar:
@@ -87,6 +135,8 @@ def main_cs():
 
 
     st.sidebar.divider()
+
+    sp = get_token()
 
 
     if options == "Song Meta-Info":
