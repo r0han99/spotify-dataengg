@@ -32,7 +32,6 @@ def load_keys():
 
 def get_token():
 
-    st.markdown("inside get token")
 
     client_id, client_secret = load_keys()
 
@@ -40,6 +39,7 @@ def get_token():
     SPOTIPY_CLIENT_ID = client_id
     SPOTIPY_CLIENT_SECRET = client_secret
     SPOTIPY_REDIRECT_URI = 'https://inferential-spotify-dashboard.streamlit.app/'
+    # SPOTIPY_REDIRECT_URI = 'http://localhost:8080/callback' # for testing
     SCOPE= 'user-library-read user-library-modify playlist-read-private playlist-modify-private'
 
     #Initialize the Spotify client
@@ -53,29 +53,31 @@ def get_token():
     )
     token_info = None
 
-    st.write("got sp")
+    
 
     try:
         token_info = st.session_state['token_info']
-        st.write("st.session_state['token_info']")
+        
     except KeyError:
         pass
 
     if token_info and time.time() < token_info['expires_at']:
-        st.write("Found cached token!")
+        print("Found cached token!")
         return token_info['access_token']
 
     sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SCOPE)
     url = sp_oauth.get_authorize_url()
-    st.write('Please log in here:', url)
+    st.sidebar.link_button('Click Here to Authenticate!', url)
 
     if 'code' in st.experimental_get_query_params():
         code = st.experimental_get_query_params()['code'][0]
         token_info = sp_oauth.get_access_token(code)
         st.session_state['token_info'] = token_info
-        return token_info['access_token']
+        return token_info['access_token'], sp
     
-    return sp
+    return None, sp
+
+
 
 def fetch_song_meta(sp):
 
@@ -131,6 +133,9 @@ def main_cs():
     
 
 
+    token, sp = get_token()
+    st.sidebar.divider()
+
     with st.sidebar:
         makesubtitle("Control shelf ⏭️", weight='bold')
 
@@ -143,7 +148,7 @@ def main_cs():
 
     st.sidebar.divider()
 
-    sp = get_token()
+    
 
 
     if options == "Song Meta-Info":
