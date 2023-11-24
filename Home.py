@@ -68,7 +68,7 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
 
     if token_info and time.time() < token_info['expires_at']:
         print("Found cached token!")
-        return token_info['access_token']
+        token_info['access_token']
 
     sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SCOPE)
     url = sp_oauth.get_authorize_url()
