@@ -29,9 +29,7 @@ def load_keys():
 
 
 
-
-def get_token():
-
+def instantiate_spotipy_object():
 
     client_id, client_secret = load_keys()
 
@@ -51,6 +49,14 @@ def get_token():
             scope=SCOPE,
         )
     )
+
+    return sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE
+
+
+
+
+def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE):
+
 
     token_info = None
 
@@ -74,7 +80,7 @@ def get_token():
         token_info = sp_oauth.get_access_token(code)
         st.session_state['token_info'] = token_info
 
-        st.write(st.session_state)
+        st.code(st.session_state)
         return token_info['access_token']
     
     return None
@@ -136,8 +142,8 @@ def main_cs():
     maketitle()
     
 
-
-    token = get_token()
+    sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE = instantiate_spotipy_object()
+    token = get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE)
     st.write(token)
     st.sidebar.divider()
 
