@@ -51,9 +51,8 @@ def get_token():
             scope=SCOPE,
         )
     )
-    token_info = None
 
-    
+    token_info = None
 
     try:
         token_info = st.session_state['token_info']
@@ -74,9 +73,11 @@ def get_token():
         code = st.experimental_get_query_params()['code'][0]
         token_info = sp_oauth.get_access_token(code)
         st.session_state['token_info'] = token_info
-        return (token_info['access_token'], sp)
+
+        st.write(st.session_state)
+        return token_info['access_token']
     
-    return (None, sp)
+    return None
 
 
 
@@ -136,7 +137,7 @@ def main_cs():
     
 
 
-    token, sp = get_token()
+    token = get_token()
     st.write(token)
     st.sidebar.divider()
 
