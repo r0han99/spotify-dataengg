@@ -1,5 +1,6 @@
 # App Interface
 import streamlit as st 
+import time
 
 # for spotify 
 import spotipy
@@ -31,12 +32,14 @@ def load_keys():
 
 def get_token():
 
+    st.markdown("inside get token")
+
     client_id, client_secret = load_keys()
 
     # Instantiate Object
     SPOTIPY_CLIENT_ID = client_id
     SPOTIPY_CLIENT_SECRET = client_secret
-    SPOTIPY_REDIRECT_URI = 'localhost:8051'
+    SPOTIPY_REDIRECT_URI = 'https://inferential-spotify-dashboard.streamlit.app/'
     SCOPE= 'user-library-read user-library-modify playlist-read-private playlist-modify-private'
 
     #Initialize the Spotify client
@@ -49,13 +52,17 @@ def get_token():
         )
     )
     token_info = None
+
+    st.write("got sp")
+
     try:
         token_info = st.session_state['token_info']
+        st.write("st.session_state['token_info']")
     except KeyError:
         pass
 
     if token_info and time.time() < token_info['expires_at']:
-        print("Found cached token!")
+        st.write("Found cached token!")
         return token_info['access_token']
 
     sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SCOPE)
