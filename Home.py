@@ -38,8 +38,8 @@ def get_token():
     # Instantiate Object
     SPOTIPY_CLIENT_ID = client_id
     SPOTIPY_CLIENT_SECRET = client_secret
-    SPOTIPY_REDIRECT_URI = 'https://inferential-spotify-dashboard.streamlit.app/'
-    # SPOTIPY_REDIRECT_URI = 'http://localhost:8080/callback' # for testing
+    # SPOTIPY_REDIRECT_URI = 'https://inferential-spotify-dashboard.streamlit.app/'
+    SPOTIPY_REDIRECT_URI = 'http://localhost:8080/callback' # for testing
     SCOPE= 'user-library-read user-library-modify playlist-read-private playlist-modify-private'
 
     #Initialize the Spotify client
@@ -73,9 +73,9 @@ def get_token():
         code = st.experimental_get_query_params()['code'][0]
         token_info = sp_oauth.get_access_token(code)
         st.session_state['token_info'] = token_info
-        return token_info['access_token'], sp
+        return (token_info['access_token'], sp)
     
-    return None, sp
+    return (None, sp)
 
 
 
@@ -134,6 +134,8 @@ def main_cs():
 
 
     token, sp = get_token()
+    st.write(token)
+    st.write(sp)
     st.sidebar.divider()
 
     with st.sidebar:
