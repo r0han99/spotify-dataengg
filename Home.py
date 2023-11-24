@@ -38,8 +38,8 @@ def get_token():
     # Instantiate Object
     SPOTIPY_CLIENT_ID = client_id
     SPOTIPY_CLIENT_SECRET = client_secret
-    # SPOTIPY_REDIRECT_URI = 'https://inferential-spotify-dashboard.streamlit.app/'
-    SPOTIPY_REDIRECT_URI = 'http://localhost:8080/callback' # for testing
+    SPOTIPY_REDIRECT_URI = 'https://inferential-spotify-dashboard.streamlit.app/'
+    # SPOTIPY_REDIRECT_URI = 'http://localhost:8080/callback' # for testing
     SCOPE= 'user-library-read user-library-modify playlist-read-private playlist-modify-private'
 
     #Initialize the Spotify client
@@ -70,6 +70,7 @@ def get_token():
     st.sidebar.link_button('Click Here to Authenticate!', url)
 
     if 'code' in st.experimental_get_query_params():
+        st.write("inside if code")
         code = st.experimental_get_query_params()['code'][0]
         token_info = sp_oauth.get_access_token(code)
         st.session_state['token_info'] = token_info
@@ -93,7 +94,7 @@ def fetch_song_meta(sp):
     if search_results and search_results['tracks']['items']:
         track = search_results['tracks']['items'][0]
         # Get album information
-        st.write(track)
+        # st.write(track)
         album_info = sp.album(track['album']['id'])
         track_id = track['id']
         cols = st.columns(2)
@@ -127,6 +128,8 @@ def fetch_song_meta(sp):
 # main interface -- app starts here
 def main_cs():
 
+    # Initialize session state
+    
 
     setfonts()
     maketitle()
@@ -135,7 +138,6 @@ def main_cs():
 
     token, sp = get_token()
     st.write(token)
-    st.write(sp)
     st.sidebar.divider()
 
     with st.sidebar:
