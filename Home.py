@@ -38,7 +38,7 @@ def instantiate_spotipy_object():
     SPOTIPY_CLIENT_SECRET = client_secret
     SPOTIPY_REDIRECT_URI = 'https://inferential-spotify-dashboard.streamlit.app/'
     # SPOTIPY_REDIRECT_URI = 'http://localhost:8080/callback' # for testing
-    SCOPE= 'user-library-read user-library-modify playlist-read-private playlist-modify-private'
+    SCOPE= 'user-library-read user-library-modify playlist-read-private playlist-modify-private user-top-read'
 
     #Initialize the Spotify client
     sp = spotipy.Spotify(
@@ -84,6 +84,26 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
         return token_info['access_token']
     
     return None
+
+def spotipy_wrapped(sp):
+
+    username = st.text_input("Your Username?")
+
+    try:
+        # Retrieve the user's top tracks
+        time_range = 'long_term'  # Options: 'short_term', 'medium_term', 'long_term'
+        top_tracks = sp.current_user_top_tracks(time_range=time_range, limit=25)
+
+        st.subheader("Your top tracks this year!")
+        for idx, track in enumerate(top_tracks['items'], 1):
+            st.code(f"{idx}. {track['name']} by {', '.join([artist['name'] for artist in track['artists']])}")
+
+
+    except:
+        st.error("something went wrong!")
+
+
+
 
 
 
@@ -154,7 +174,7 @@ def main_cs():
 
 
     options = st.sidebar.selectbox("What do you want to know?", ["Select", "Current Trends", "Compare Playlists", "Playlist Variability Analysis",
-                                                                 "Know the Artist", "Song Meta-Info", "Your Playlist Analysis"])
+                                                                 "Know the Artist", "Song Meta-Info", "Your Playlist Analysis", "Wrapped!"])
 
 
     st.sidebar.divider()
@@ -166,6 +186,8 @@ def main_cs():
 
         fetch_song_meta(sp)
 
+    elif options == "Wrapped!":
+        spotipy_wrapped(sp)
    
 
 
