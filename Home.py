@@ -189,11 +189,15 @@ def main_cs():
 
     if token != None:
         st.balloons()
-    
+        
+        st.markdown('''<center><span style="font-size:30px; font-family:'poppins';"> Explore Music through Numbers! Look what the app has to offer.</span></center>''', unsafe_allow_html=True)
+        st.subheader("",divider="rainbow")
+
+        # UPDATE THIS AREA WITH APP GALLERY
+        st.code("This will Show the APP GALLERY!")
+
+
     st.divider()
-    
-
-
 
     with st.sidebar:
         makesubtitle("Control shelf ⏭️", weight='bold')
