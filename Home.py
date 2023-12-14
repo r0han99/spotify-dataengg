@@ -72,13 +72,14 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
     sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SCOPE)
     url = sp_oauth.get_authorize_url()
 
-    slot = st.empty()
+    
     cols = st.columns([5,5])
     with cols[0]:
         st.subheader("Click Authenticate to Unlock Full Features!")
 
 
     with cols[1]:
+        slot = st.empty()
         slot.link_button('Authenticate!', url, use_container_width=True)
 
     expander = st.expander("Why Authenticate? What happens when you click it.")
