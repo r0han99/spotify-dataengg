@@ -93,12 +93,11 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
 
 
     if 'code' in st.experimental_get_query_params():
-        st.write("inside if code")
         code = st.experimental_get_query_params()['code'][0]
         token_info = sp_oauth.get_access_token(code)
         st.session_state['token_info'] = token_info
 
-        st.code(st.session_state)
+        # st.code(st.session_state)
         return token_info['access_token']
     
     return None
@@ -182,6 +181,9 @@ def main_cs():
 
     sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE = instantiate_spotipy_object()
     token = get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE)
+
+    if token != None:
+        st.balloons()
     
     st.divider()
     
