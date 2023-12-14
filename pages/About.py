@@ -1,6 +1,5 @@
 # Rendering 
 from src.subtitle import makesubtitle
-from src.title import maketitle
 from src.font import setfonts
 import streamlit as st
 

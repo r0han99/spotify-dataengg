@@ -13,7 +13,6 @@ import os
 
 # Rendering 
 from src.subtitle import makesubtitle
-from src.title import maketitle
 from src.font import setfonts
 
 
@@ -72,7 +71,26 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
 
     sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SCOPE)
     url = sp_oauth.get_authorize_url()
-    st.sidebar.link_button('Click Here to Authenticate!', url)
+    cols = st.columns([5,5])
+
+    with cols[0]:
+        st.subheader("Click Authenticate to Unlock Full Features!")
+
+
+    with cols[1]:
+        st.link_button('Authenticate!', url, use_container_width=True)
+
+    expander = st.expander("Why Authenticate? What happens when you click it.")
+    
+    with open("./info/auth_notes.md", "r") as f:
+        content = f.read()
+    expander.markdown(content)
+    expander.markdown("Example")
+    expander.markdown("App URL Pre-Authentication")
+    expander.image("./info/image-1.png")
+    expander.markdown("App URL Post-Authentication")
+    expander.image("./info/image-2.png")
+
 
     if 'code' in st.experimental_get_query_params():
         st.write("inside if code")
@@ -88,21 +106,25 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
 def spotipy_wrapped(sp):
 
     username = st.text_input("Your Username?")
+    
 
-    try:
-        # Retrieve the user's top tracks
-        time_range = 'long_term'  # Options: 'short_term', 'medium_term', 'long_term'
-        top_tracks = sp.current_user_top_tracks(time_range=time_range, limit=25)
+    if username != "":
+        try:
+            # Retrieve the user's top tracks
+            time_range = 'long_term'  # Options: 'short_term', 'medium_term', 'long_term'
+            top_tracks = sp.current_user_top_tracks(time_range=time_range, limit=25)
 
-        st.subheader("Your top tracks this year!")
-        for idx, track in enumerate(top_tracks['items'], 1):
-            st.code(f"{idx}. {track['name']} by {', '.join([artist['name'] for artist in track['artists']])}")
-
-
-    except:
-        st.error("something went wrong!")
+            st.subheader("Your top tracks this year!")
+            for idx, track in enumerate(top_tracks['items'], 1):
+                st.code(f"{idx}. {track['name']} by {', '.join([artist['name'] for artist in track['artists']])}")
 
 
+        except:
+            st.error("something went wrong!")
+
+    else:
+        st.info("Enter Username!")
+        st.code("test")
 
 
 
@@ -144,10 +166,6 @@ def fetch_song_meta(sp):
             st.code(f"Tempo: {audio_features['tempo']}")
 
         
-
-        
-
-        
     else:
         st.warning(f"No track found with the name '{track_name}'")
 
@@ -159,18 +177,21 @@ def main_cs():
     
 
     setfonts()
-    maketitle()
-    
+    st.markdown('''<center><span style="font-family: 'Circular Std', 'Poppins';font-weight:bold;">This is the, <span style="font-size: 50px; color:#1DB954; font-weight:bold; font-family:'Circular Std', 'Poppins';">Inferential Spotify Dashboard<span></span></center>''',unsafe_allow_html=True)
+    st.divider()
 
     sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE = instantiate_spotipy_object()
     token = get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE)
-    st.write(token)
-    st.sidebar.divider()
+    
+    st.divider()
+    
+
+
 
     with st.sidebar:
         makesubtitle("Control shelf ⏭️", weight='bold')
 
-    st.divider()
+    
 
 
     options = st.sidebar.selectbox("What do you want to know?", ["Select", "Current Trends", "Compare Playlists", "Playlist Variability Analysis",
@@ -179,7 +200,6 @@ def main_cs():
 
     st.sidebar.divider()
 
-    
 
 
     if options == "Song Meta-Info":
