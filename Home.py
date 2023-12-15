@@ -223,7 +223,7 @@ def main_cs():
 
     else:
 
-        st.subheader("← Please Authenticate to proceed! ", divider="rainbow")
+        st.markdown('''<center><span style="font-size:30px;"> ← </span> <span style="font-family:'sans serif'; font-size:30px;">Please Authenticate to proceed!</span></center>''',unsafe_allow_html=True)
    
 
 
