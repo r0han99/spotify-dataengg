@@ -190,43 +190,40 @@ def main_cs():
 
         st.divider()
     
-    
-
-    
     if st.session_state.token_state == "recieved":
         
-        st.divider()
-        st.balloons()
+        with st.sidebar:
+            makesubtitle("Control shelf ⏭️", weight='bold')
+
         
-        st.markdown('''<center><span style="font-size:30px; font-family:'poppins';"> Explore Music through Numbers! Look what the app has to offer.</span></center>''', unsafe_allow_html=True)
-        st.subheader("",divider="rainbow")
-
-        # UPDATE THIS AREA WITH APP GALLERY
-        st.code("This area will Show the APP GALLERY!")
 
 
-    
-
-    with st.sidebar:
-        makesubtitle("Control shelf ⏭️", weight='bold')
-
-    
+        options = st.sidebar.selectbox("What do you want to know?", ["What do you want to know?", "Current Trends", "Compare Playlists", "Playlist Variability Analysis",
+                                                                    "Know the Artist", "Song Meta-Info", "Your Playlist Analysis", "Wrapped!"])
 
 
-    options = st.sidebar.selectbox("What do you want to know?", ["Select", "Current Trends", "Compare Playlists", "Playlist Variability Analysis",
-                                                                 "Know the Artist", "Song Meta-Info", "Your Playlist Analysis", "Wrapped!"])
+        st.sidebar.divider()
+
+        if options == "What do you want to know?":
+            st.balloons()
+        
+            st.markdown('''<center><span style="font-size:30px; font-family:'poppins';"> Explore Music through Numbers! Look what the app has to offer.</span></center>''', unsafe_allow_html=True)
+            st.subheader("",divider="rainbow")
+
+            # UPDATE THIS AREA WITH APP GALLERY
+            st.code("This area will Show the APP GALLERY!")
+
+        elif options == "Song Meta-Info":
+
+            fetch_song_meta(sp)
+
+        elif options == "Wrapped!":
+            spotipy_wrapped(sp)
 
 
-    st.sidebar.divider()
+    else:
 
-
-
-    if options == "Song Meta-Info":
-
-        fetch_song_meta(sp)
-
-    elif options == "Wrapped!":
-        spotipy_wrapped(sp)
+        st.subheader("← Please Authenticate to proceed! ", divider="rainbow")
    
 
 
