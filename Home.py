@@ -184,8 +184,10 @@ def main_cs():
     
     
 
-    st.divider()
-    if st.session_state.token_state != None:
+
+    if st.session_state.token_state == "received":
+        st.write(st.session_state)
+        st.divider()
         st.balloons()
         
         st.markdown('''<center><span style="font-size:30px; font-family:'poppins';"> Explore Music through Numbers! Look what the app has to offer.</span></center>''', unsafe_allow_html=True)
@@ -195,7 +197,7 @@ def main_cs():
         st.code("This area will Show the APP GALLERY!")
 
 
-    st.divider()
+    
 
     with st.sidebar:
         makesubtitle("Control shelf ⏭️", weight='bold')
