@@ -54,7 +54,6 @@ def instantiate_spotipy_object():
 
 
 
-@st.cache_data
 def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE):
 
 
@@ -103,6 +102,9 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
         
         # Replacing button
         slot.warning("Great!, You are now authenticated!")
+
+        if 'token_state' not in st.session_state:
+            st.session_state.stored_text = "recieved"
 
         return token_info['access_token']
     
@@ -164,7 +166,13 @@ def main_cs():
     st.divider()
 
     sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE = instantiate_spotipy_object()
-    token = get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE)
+    
+    if 'token_state' not in st.session_state:
+        st.session_state.token_state = None
+    
+    if st.session_state.token_state != None:
+        token = get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE)
+    
 
     st.divider()
     if token != None:
