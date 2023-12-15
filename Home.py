@@ -162,6 +162,17 @@ def main_cs():
     
 
     setfonts()
+    st.markdown(
+    """
+    <style>
+        section[data-testid="stSidebar"] {
+            width: 500px !important; # Set the width to your desired value
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+    )
+
     st.markdown('''<center><span style="font-family: 'Circular Std', 'Poppins';font-weight:bold;">This is the, <span style="font-size: 50px; color:#1DB954; font-weight:bold; font-family:'Circular Std', 'Poppins';">Inferential Spotify Dashboard<span></span></center>''',unsafe_allow_html=True)
     st.divider()
 
@@ -173,18 +184,15 @@ def main_cs():
         if 'token_state' not in st.session_state:
             st.session_state.token_state = None
         
-        # st.write("session state")
-        # st.write(st.session_state)
 
         if st.session_state.token_state == None:
             token = get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE)
 
-        # st.write("session state")
-        # st.write(st.session_state)
+        st.divider()
     
     
 
-    st.write(st.session_state)
+    
     if st.session_state.token_state == "recieved":
         
         st.divider()
