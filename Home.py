@@ -167,6 +167,11 @@ def main_cs():
 
     sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE = instantiate_spotipy_object()
     
+
+    st.write("session state")
+    st.write(st.session_state)
+
+
     if 'token_state' not in st.session_state:
         st.session_state.token_state = None
     
