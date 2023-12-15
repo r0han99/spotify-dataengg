@@ -14,6 +14,7 @@ import os
 # Rendering 
 from src.subtitle import makesubtitle
 from src.font import setfonts
+from src.wrapped import spotipy_wrapped
 
 
 
@@ -53,7 +54,7 @@ def instantiate_spotipy_object():
 
 
 
-
+@st.cache_resource
 def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE):
 
 
@@ -107,28 +108,6 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
     
     return None
 
-def spotipy_wrapped(sp):
-
-    username = st.text_input("Your Username?")
-    
-
-    if username != "":
-        try:
-            # Retrieve the user's top tracks
-            time_range = 'long_term'  # Options: 'short_term', 'medium_term', 'long_term'
-            top_tracks = sp.current_user_top_tracks(time_range=time_range, limit=25)
-
-            st.subheader("Your top tracks this year!")
-            for idx, track in enumerate(top_tracks['items'], 1):
-                st.code(f"{idx}. {track['name']} by {', '.join([artist['name'] for artist in track['artists']])}")
-
-
-        except:
-            st.error("something went wrong!")
-
-    else:
-        st.info("Enter Username!")
-        st.code("test")
 
 
 
@@ -187,6 +166,7 @@ def main_cs():
     sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE = instantiate_spotipy_object()
     token = get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE)
 
+    st.divider()
     if token != None:
         st.balloons()
         
@@ -194,7 +174,7 @@ def main_cs():
         st.subheader("",divider="rainbow")
 
         # UPDATE THIS AREA WITH APP GALLERY
-        st.code("This will Show the APP GALLERY!")
+        st.code("This area will Show the APP GALLERY!")
 
 
     st.divider()
