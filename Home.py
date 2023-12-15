@@ -54,7 +54,7 @@ def instantiate_spotipy_object():
 
 
 
-@st.cache(allow_output_mutation=True,suppress_st_warning=True)
+@st.cache(suppress_st_warning=True)
 def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE):
 
 
