@@ -186,7 +186,7 @@ def main_cs():
     
 
     st.divider()
-    if token != None:
+    if st.session_state.token_state != None:
         st.balloons()
         
         st.markdown('''<center><span style="font-size:30px; font-family:'poppins';"> Explore Music through Numbers! Look what the app has to offer.</span></center>''', unsafe_allow_html=True)
