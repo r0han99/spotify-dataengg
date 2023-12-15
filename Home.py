@@ -104,7 +104,7 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
         slot.warning("Great!, You are now authenticated!")
 
         
-        st.session_state.stored_text = "recieved"
+        st.session_state.token_state = "recieved"
 
         return token_info['access_token']
     
