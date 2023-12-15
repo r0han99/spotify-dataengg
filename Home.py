@@ -16,6 +16,7 @@ import os
 from src.subtitle import makesubtitle
 from src.font import setfonts
 from src.wrapped import spotipy_wrapped
+from src.playlist_variability import analyse_playlist_variability
 
 
 
@@ -37,8 +38,8 @@ def instantiate_spotipy_object():
     # Instantiate Object
     SPOTIPY_CLIENT_ID = client_id
     SPOTIPY_CLIENT_SECRET = client_secret
-    SPOTIPY_REDIRECT_URI = 'https://inferential-spotify-dashboard.streamlit.app/'
-    # SPOTIPY_REDIRECT_URI = 'http://localhost:8501/callback' # for testing
+    # SPOTIPY_REDIRECT_URI = 'https://inferential-spotify-dashboard.streamlit.app/'
+    SPOTIPY_REDIRECT_URI = 'http://localhost:8501/callback' # for testing
     SCOPE= 'user-library-read user-library-modify playlist-read-private playlist-modify-private user-top-read'
 
     #Initialize the Spotify client
@@ -107,10 +108,6 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
 
 def fetch_song_meta(sp):
 
-    # Get the current user's username
-    # user_info = sp.current_user()
-    # user_id = user_info['id']
-    # print(f"Logged in as {user_id}")
 
     # Search for a track
     track_name = st.text_input("Enter a Track Name", placeholder="Runaway",value="Runaway")
@@ -210,6 +207,17 @@ def main_cs():
 
         elif options == "Wrapped!":
             spotipy_wrapped(sp)
+
+
+        elif options == "Playlist Variability Analysis":
+
+            username = st.text_input("Enter UserName: ")
+            if username != None:
+                analyse_playlist_variability(sp, username)
+
+
+
+
 
 
     else:
