@@ -2,3 +2,4 @@ streamlit
 spotipy
 pandas 
 numpy
+streamlit-extras

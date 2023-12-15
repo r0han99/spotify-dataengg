@@ -1,5 +1,6 @@
 # App Interface
 import streamlit as st 
+from streamlit_extras.app_logo import add_logo
 import time
 
 # for spotify 
@@ -36,8 +37,8 @@ def instantiate_spotipy_object():
     # Instantiate Object
     SPOTIPY_CLIENT_ID = client_id
     SPOTIPY_CLIENT_SECRET = client_secret
-    SPOTIPY_REDIRECT_URI = 'https://inferential-spotify-dashboard.streamlit.app/'
-    # SPOTIPY_REDIRECT_URI = 'http://localhost:8080/callback' # for testing
+    # SPOTIPY_REDIRECT_URI = 'https://inferential-spotify-dashboard.streamlit.app/'
+    SPOTIPY_REDIRECT_URI = 'http://localhost:8501/callback' # for testing
     SCOPE= 'user-library-read user-library-modify playlist-read-private playlist-modify-private user-top-read'
 
     #Initialize the Spotify client
@@ -79,19 +80,9 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
 
 
     with cols[1]:
+        st.markdown("")
         slot = st.empty()
         slot.link_button('Authenticate!', url, use_container_width=True)
-
-    expander = st.expander("Why Authenticate? What happens when you click it.")
-    
-    with open("./info/auth_notes.md", "r") as f:
-        content = f.read()
-    expander.markdown(content)
-    expander.markdown("Example")
-    expander.markdown("App URL Pre-Authentication")
-    expander.image("./info/image-1.png")
-    expander.markdown("App URL Post-Authentication")
-    expander.image("./info/image-2.png")
 
 
     if 'code' in st.experimental_get_query_params():
@@ -117,8 +108,8 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
 def fetch_song_meta(sp):
 
     # Get the current user's username
-    user_info = sp.current_user()
-    user_id = user_info['id']
+    # user_info = sp.current_user()
+    # user_id = user_info['id']
     # print(f"Logged in as {user_id}")
 
     # Search for a track
@@ -131,10 +122,10 @@ def fetch_song_meta(sp):
         # st.write(track)
         album_info = sp.album(track['album']['id'])
         track_id = track['id']
-        cols = st.columns(2)
+        cols = st.columns([5,4])
 
         with cols[0]:
-            makesubtitle(f"{track['name']} by {', '.join([artist['name'] for artist in track['artists']])}", color='b',weight='bold')
+            st.subheader(f"{track['name']} by {', '.join([artist['name'] for artist in track['artists']])}",)
             #st.code(f"Track: {track['name']} by {', '.join([artist['name'] for artist in track['artists']])}")
             album_art_url = album_info['images'][0]['url']
             st.image(album_art_url, width=450)
@@ -159,7 +150,7 @@ def fetch_song_meta(sp):
 def main_cs():
 
     # Initialize session state
-    
+    # add_logo("./assets/next.png", height=10)
 
     setfonts()
     st.markdown(
@@ -224,7 +215,17 @@ def main_cs():
     else:
 
         st.markdown('''<center><span style="font-size:30px;"> ← </span> <span style="font-family:'sans serif'; font-size:30px;">Please Authenticate to proceed!</span></center>''',unsafe_allow_html=True)
-   
+        st.divider()
+        expander = st.expander("Why Authenticate? What happens when you click it.")
+    
+        with open("./info/auth_notes.md", "r") as f:
+            content = f.read()
+        expander.markdown(content)
+        expander.markdown("Example")
+        expander.markdown("App URL Pre-Authentication")
+        expander.image("./info/image-1.png")
+        expander.markdown("App URL Post-Authentication")
+        expander.image("./info/image-2.png")
 
 
 if __name__ == '__main__':
