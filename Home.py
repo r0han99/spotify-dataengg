@@ -184,9 +184,9 @@ def main_cs():
     
     
 
-
+    st.write(st.session_state)
     if st.session_state.token_state == "received":
-        st.write(st.session_state)
+        
         st.divider()
         st.balloons()
         
