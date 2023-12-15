@@ -54,7 +54,7 @@ def instantiate_spotipy_object():
 
 
 
-@st.cache_resource
+@st.cache
 def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE):
 
 
