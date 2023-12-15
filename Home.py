@@ -174,14 +174,14 @@ def main_cs():
     if 'token_state' not in st.session_state:
         st.session_state.token_state = None
     
-    st.write("session state")
-    st.write(st.session_state)
+    # st.write("session state")
+    # st.write(st.session_state)
 
     if st.session_state.token_state == None:
         token = get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, SCOPE)
 
-    st.write("session state")
-    st.write(st.session_state)
+    # st.write("session state")
+    # st.write(st.session_state)
     
     
 
