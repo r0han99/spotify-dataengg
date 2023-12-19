@@ -3,4 +3,6 @@ spotipy
 pandas 
 numpy
 streamlit-extras
-
+seaborn 
+plotly 
+altair
