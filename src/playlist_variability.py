@@ -86,6 +86,8 @@ def analyse_playlist_variability(sp, username):
     
     
     st.markdown("_Copy and paste the orange string associated to the playlist you want!_")
+    expander = st.expander("Read Me!")
+    expander.info("We recommend to `clear_caches` and try again if you see any incorrect results. press `c` to `clear_caches`.")
     st.divider()
     
     songs_artist_dict = []
@@ -134,7 +136,7 @@ def analyse_playlist_variability(sp, username):
         """
         <style>
             section[data-testid="stSidebar"] {
-                width: 300px !important; # Set the width to your desired value
+                width: 400px !important; # Set the width to your desired value
             }
         </style>
         """,

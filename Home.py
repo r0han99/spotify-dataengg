@@ -7,9 +7,12 @@ import time
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
 
+
+
 # os dependencies
 import sys
 import os
+import base64
 
 
 # Rendering 
@@ -17,8 +20,14 @@ from src.subtitle import makesubtitle
 from src.font import setfonts
 from src.wrapped import spotipy_wrapped
 from src.playlist_variability import analyse_playlist_variability
+from src.current_trends import display_current_trends
 
 
+
+# Convert the logo image to base64
+def image_to_base64(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
 
 def load_keys():
 
@@ -27,14 +36,28 @@ def load_keys():
     
     keys = (client_id, client_secret)
 
-    return keys
+    # AWS Keys
+
+    AWS_Service = st.secrets['AWS_Service']
+    AWS_S3_bucket_name = st.secrets['AWS_S3_bucket_name']
+    AWS_Access_key = st.secrets['AWS_Access_key']
+    AWS_Secret_Access_key = st.secrets['AWS_Secret_Access_key']
+    AWS_User = st.secrets['AWS_User']
+    AWS_FOLDER = st.secrets['AWS_FOLDER']
+    BUCKET_NAME = st.secrets['BUCKET_NAME']
+
+    aws_keys = [AWS_Service, AWS_S3_bucket_name, AWS_Access_key, AWS_Secret_Access_key, AWS_User, AWS_FOLDER, BUCKET_NAME]
+
+    return keys, aws_keys
 
 
 
 def instantiate_spotipy_object():
 
-    client_id, client_secret = load_keys()
+    keys, aws_keys = load_keys()
 
+    client_id, client_secret = keys
+    
     # Instantiate Object
     SPOTIPY_CLIENT_ID = client_id
     SPOTIPY_CLIENT_SECRET = client_secret
@@ -93,7 +116,7 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
 
         
         # Replacing button
-        slot.warning("Great!, You are now authenticated!")
+        slot.success("Great! You are now authenticated!")
 
         
         st.session_state.token_state = "recieved"
@@ -227,6 +250,8 @@ def fetch_song_meta(sp):
                         expander = st.expander(f"{feature_name.capitalize()}")
                         expander.info(f'''{audio_feature_descriptions[feature_name]}''',icon="ℹ️")
 
+
+
 # main interface -- app starts here
 def main_cs():
 
@@ -283,6 +308,13 @@ def main_cs():
 
             # UPDATE THIS AREA WITH APP GALLERY
             st.code("This area will Show the APP GALLERY!")
+
+        elif options == "Current Trends":
+            _, aws_keys = load_keys()
+    
+            display_current_trends(aws_keys)
+
+        
 
         elif options == "Song Meta-Info":
 
@@ -398,14 +430,19 @@ def main_cs():
 
 if __name__ == '__main__':
 
-    st.set_page_config(page_title="spotify dash", layout="wide", initial_sidebar_state="auto")
+    logo_url = './assets/spotipy-logo.png'
+    logo_base64 = image_to_base64(logo_url)
+
+    st.set_page_config(page_title="Spotify Inference", layout="wide", initial_sidebar_state="auto", page_icon=logo_url)
 
     main_cs()
 
-    st.sidebar.markdown('''
+    st.sidebar.markdown(f'''
     <center>
+        <img src="data:image/png;base64,{logo_base64}" alt="Your Logo" style="width: 54px; height: 54px; vertical-align: middle;">
         <span style="font-family: 'Circular Std'; font-size: 30px;">
-            Spotify <span style="font-family:'manrope';display: inline-block; width: 300px; height: 25px; line-height: 20px; background-color: #f0f0f0; border: 2px solid #000; text-align: center; border-radius: 10px; font-size: 15px;">A Different Perspective</span>
+            Spotify 
+            <span style="font-family:'manrope';display: inline-block; width: 300px; height: 25px; line-height: 20px; background-color: #f0f0f0; border: 2px solid #000; text-align: center; border-radius: 10px; font-size: 15px;">A Different Perspective</span>
         </span>
     </center>
 ''', unsafe_allow_html=True)
