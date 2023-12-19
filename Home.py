@@ -186,8 +186,7 @@ def main_cs():
         
 
 
-        options = st.sidebar.selectbox("What do you want to know?", ["What do you want to know?", "Current Trends", "Compare Playlists", "Playlist Variability Analysis",
-                                                                    "Know the Artist", "Song Meta-Info", "Your Playlist Analysis", "Wrapped!"])
+        options = st.sidebar.selectbox("What do you want to know?", ["What do you want to know?", "Current Trends", "Compare Playlists", "Playlist Variability Analysis", "Song Meta-Info", "Wrapped!"])
 
 
         st.sidebar.divider()
@@ -211,9 +210,26 @@ def main_cs():
 
         elif options == "Playlist Variability Analysis":
 
-            username = st.text_input("Enter UserName: ")
-            if username != None:
+
+            
+            username = st.text_input("Enter UserName: ", value="", placeholder="nocturnel99")
+            
+            expander = st.expander("Spotify Usernames are not what you think! See this!", expanded=False)
+            
+            with expander:
+                st.error("This is not the Username!")
+                st.image("./assets/spotify-wrong-username.png")
+                st.success("This is your username!")
+                st.image("./assets/spotify-right-username.png")
+
+
+            if username != "":
                 analyse_playlist_variability(sp, username)
+
+            else:
+                st.warning("Enter a username!")
+
+                st.divider()
 
 
 
