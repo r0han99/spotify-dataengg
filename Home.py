@@ -21,6 +21,7 @@ from src.font import setfonts
 from src.wrapped import spotipy_wrapped
 from src.playlist_variability import analyse_playlist_variability
 from src.current_trends import display_current_trends
+from src.song_meta_info import fetch_song_information
 
 
 
@@ -156,107 +157,56 @@ def fetch_song_meta(sp):
     st.divider()
 
     if song_name:
-        # Search for the song by name
-        query = f"{song_name}"
+        
+    
+        track_info, feature_names, feature_values = fetch_song_information(sp, song_name)
 
-        # Search for the song by name only
-        results = sp.search(q=query, type='track', limit=1)
+        cols = st.columns(2)
 
-        # Check if any tracks were found
-        if results['tracks']['items']:
-            track = results['tracks']['items'][0]
-            track_id = track['id']
+        with cols[0]:
 
-            # Get audio features for the track
-            audio_features = sp.audio_features(track_id)
+            st.markdown(f'''<span style="font-family:'poppins'; font-size:29px; font-weight:bold; color:#1DB954;">{track_info['song_name']}</span>''',unsafe_allow_html=True)
+            st.image(track_info["album_cover_url"], width=400, caption=f'{track_info["album_name"]}')
 
-            if audio_features:
-                # Extract the relevant audio features
-                features = audio_features[0]
-                feature_names = [
-                    'danceability', 'energy', 'key', 'loudness', 'mode', 
-                    'speechiness', 'acousticness', 'instrumentalness', 
-                    'liveness', 'valence', 'tempo', 'duration_ms'
-                ]
+        with cols[1]:
+            st.markdown(f'''<span style="font-family:'poppins'; font-size:25px; font-weight:bold;"> By {track_info["artist_name"]}</span>''',unsafe_allow_html=True)
+            st.image(track_info["artist_photo_url"], width=300, caption=f'')
+            st.markdown(f'''<span style="font-family:'poppins'; font-size:20px;">Song Popularity</span><span style="font-family:'poppins'; font-size:30px; font-weight:bold; color:#1DB954;">  {track_info["popularity"]}</span>''',unsafe_allow_html=True)
+            
+            # st.code(top_track_dict['Explicit'])
+            if not track_info['explicit']:
+                explicit = "No"
+            else:
+                explicit = "Yes"
 
-                # Create a list of audio feature values
-                feature_values = [features[feature] for feature in feature_names]
+            st.markdown(f'''<span style="font-family:'poppins'; font-size:20px;">Explicit?</span><span style="font-family:'poppins'; font-size:30px; font-weight:bold; color:#1DB954;">  {explicit}</span>''',unsafe_allow_html=True)
+            
 
-                # Get additional track information
-                artist_id = track['artists'][0]['id']
-                artist_name = track['artists'][0]['name']  # Get the artist name
-                album_name = track['album']['name']
-                album_id = track['album']['id']
-                popularity = track['popularity']
-                explicit = track['explicit']
-                album_cover_url = track['album']['images'][0]['url']
+        st.divider()
+        st.subheader("Audio Features", divider="green")
+        # Split the features into two columns
+        cols = st.columns(2)
 
-                # Get artist information
-                artist = sp.artist(artist_id)
-                artist_photo_url = artist['images'][0]['url']
+        with cols[0]:
+            # Display the first 6 features in the first column
+            for feature_name, feature_value in zip(feature_names[:6], feature_values[:6]):
+                st.markdown(f'''<span style="font-family: poppins; font-size:25px; font-weight:bold;">{feature_name.capitalize()} - </span><span style="font-family:'poppins'; font-size:35px; font-weight:bold; color:#1DB954;">{feature_value}</span>''', unsafe_allow_html=True)
+                expander = st.expander(f"{feature_name.capitalize()}")
+                expander.info(f'''{audio_feature_descriptions[feature_name]}''',icon="ℹ️")
 
-                # Store all the information in a dictionary
-                track_info = {
-                    'song_name': song_name,
-                    'artist_name': artist_name,
-                    'album_name': album_name,
-                    'feature_values': feature_values,
-                    'popularity': popularity,
-                    'explicit': explicit,
-                    'album_cover_url': album_cover_url,
-                    'artist_photo_url': artist_photo_url,
-                }
-
-                # st.write(track_info)
-
-
-                cols = st.columns(2)
-
-                with cols[0]:
-
-                    st.markdown(f'''<span style="font-family:'poppins'; font-size:29px; font-weight:bold; color:#1DB954;">{track_info['song_name']}</span>''',unsafe_allow_html=True)
-                    st.image(track_info["album_cover_url"], width=400, caption=f'{track_info["album_name"]}')
-
-                with cols[1]:
-                    st.markdown(f'''<span style="font-family:'poppins'; font-size:25px; font-weight:bold;"> By {track_info["artist_name"]}</span>''',unsafe_allow_html=True)
-                    st.image(track_info["artist_photo_url"], width=300, caption=f'')
-                    st.markdown(f'''<span style="font-family:'poppins'; font-size:20px;">Song Popularity</span><span style="font-family:'poppins'; font-size:30px; font-weight:bold; color:#1DB954;">  {track_info["popularity"]}</span>''',unsafe_allow_html=True)
-                    
-                    # st.code(top_track_dict['Explicit'])
-                    if not track_info['explicit']:
-                        explicit = "No"
-                    else:
-                        explicit = "Yes"
-
-                    st.markdown(f'''<span style="font-family:'poppins'; font-size:20px;">Explicit?</span><span style="font-family:'poppins'; font-size:30px; font-weight:bold; color:#1DB954;">  {explicit}</span>''',unsafe_allow_html=True)
-                    
-
-                st.divider()
-                st.subheader("Audio Features", divider="green")
-                # Split the features into two columns
-                cols = st.columns(2)
-
-                with cols[0]:
-                    # Display the first 6 features in the first column
-                    for feature_name, feature_value in zip(feature_names[:6], feature_values[:6]):
-                        st.markdown(f'''<span style="font-family: poppins; font-size:25px; font-weight:bold;">{feature_name.capitalize()} - </span><span style="font-family:'poppins'; font-size:35px; font-weight:bold; color:#1DB954;">{feature_value}</span>''', unsafe_allow_html=True)
-                        expander = st.expander(f"{feature_name.capitalize()}")
-                        expander.info(f'''{audio_feature_descriptions[feature_name]}''',icon="ℹ️")
-
-                with cols[1]:
-                    # Display the remaining 6 features in the second column
-                    for feature_name, feature_value in zip(feature_names[6:], feature_values[6:]):
-                        st.markdown(f'''<span style="font-family: poppins; font-size:25px; font-weight:bold;">{feature_name.capitalize()} - </span><span style="font-family:'poppins'; font-size:35px; font-weight:bold; color:#1DB954;">{feature_value}</span>''', unsafe_allow_html=True)
-                        expander = st.expander(f"{feature_name.capitalize()}")
-                        expander.info(f'''{audio_feature_descriptions[feature_name]}''',icon="ℹ️")
+        with cols[1]:
+            # Display the remaining 6 features in the second column
+            for feature_name, feature_value in zip(feature_names[6:], feature_values[6:]):
+                st.markdown(f'''<span style="font-family: poppins; font-size:25px; font-weight:bold;">{feature_name.capitalize()} - </span><span style="font-family:'poppins'; font-size:35px; font-weight:bold; color:#1DB954;">{feature_value}</span>''', unsafe_allow_html=True)
+                expander = st.expander(f"{feature_name.capitalize()}")
+                expander.info(f'''{audio_feature_descriptions[feature_name]}''',icon="ℹ️")
 
 
 
 # main interface -- app starts here
 def main_cs():
 
-    # Initialize session state
-    # add_logo("./assets/next.png", height=10)
+
 
     setfonts()
     st.markdown(
@@ -306,15 +256,56 @@ def main_cs():
             st.markdown('''<center><span style="font-size:30px; font-family:'poppins';"> Explore Music through Numbers! Look what the app has to offer.</span></center>''', unsafe_allow_html=True)
             st.subheader("",divider="rainbow")
 
-            # UPDATE THIS AREA WITH APP GALLERY
-            st.code("This area will Show the APP GALLERY!")
+            st.markdown('''<center><span style="font-size:37px; font-family:'poppins';"> Gallery</span></center>''', unsafe_allow_html=True)
+
+            st.markdown("")
+            st.markdown("")
+            st.markdown("")
+
+
+            cols = st.columns(2)
+
+            with cols[0]:
+                st.subheader("Current Trends Page", divider="green")
+                st.image("./assets/gallery/1.png")
+
+            with cols[1]:
+                st.subheader("Your Spotify Wrapped! Top25", divider="green")
+                st.image("./assets/gallery/11.png")
+
+            st.subheader("Analyse Variability and Features of your Playlist!", divider="green")
+
+            cols = st.columns(2)
+            with cols[0]:
+                st.image("./assets/gallery/2.png")
+                st.image("./assets/gallery/4.png")
+                st.image("./assets/gallery/6.png")
+                st.image("./assets/gallery/8.png")
+
+            with cols[1]:
+                st.image("./assets/gallery/3.png")
+                st.image("./assets/gallery/5.png")
+                st.image("./assets/gallery/7.png")
+
+            st.subheader("Know about your Favourite song in a Different Perspective!", divider="green")
+            cols = st.columns(2)
+
+            with cols[0]:
+                st.image("./assets/gallery/9.png")
+
+            with cols[1]:
+                st.image("./assets/gallery/10.png")
+
+
+            st.divider()
+
 
         elif options == "Current Trends":
             _, aws_keys = load_keys()
 
             
     
-            display_current_trends(aws_keys)
+            display_current_trends(aws_keys, sp)
 
         
 
@@ -439,6 +430,9 @@ if __name__ == '__main__':
 
     main_cs()
 
+
+    logo_url = './assets/spotipy-logo.png'
+    logo_base64 = image_to_base64(logo_url)
     st.sidebar.markdown(f'''
     <center>
         <img src="data:image/png;base64,{logo_base64}" alt="Your Logo" style="width: 54px; height: 54px; vertical-align: middle;">
