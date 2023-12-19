@@ -197,6 +197,8 @@ def visualise(df,songs_artist_dict, p_name, cover, sp):
     
     cols = st.columns(2)
 
+    
+
     with cols[0]:
         st.subheader("Your Loudest Song", divider="green")
         song = df[df.Loudness ==df.Loudness.max()][['song', 'Loudness']]['song'].values[0]

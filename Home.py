@@ -108,40 +108,124 @@ def get_token(sp, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
 
 def fetch_song_meta(sp):
 
+    audio_feature_descriptions = {
+    'danceability': 'A measure of how suitable a track is for dancing. Higher values indicate tracks that are easier to dance to.',
+    'energy': 'Represents the intensity and activity of a track. Higher values indicate more energetic tracks.',
+    'key': 'The key of the track, represented as an integer from 0 to 11, where 0 represents C, 1 represents C#/Db, and so on.',
+    'loudness': 'The overall loudness of the track in decibels (dB). Negative values indicate quieter tracks.',
+    'mode': 'Indicates whether the track is in a major key (1) or a minor key (0).',
+    'speechiness': 'Measures the presence of spoken words in the track. Higher values suggest more speech-like tracks.',
+    'acousticness': 'Indicates the amount of acoustic sound in the track. A higher value means the track is more acoustic.',
+    'instrumentalness': 'Measures the likelihood that the track contains no vocals. Values closer to 1 suggest instrumental tracks.',
+    'liveness': 'Represents the presence of a live audience in the recording. Higher values suggest live recordings.',
+    'valence': 'Describes the musical positivity of the track. Higher values indicate happier, more positive tracks.',
+    'tempo': 'The tempo of the track in beats per minute (BPM). It indicates the speed or pace of the music.',
+    'duration_ms': 'The duration of the track in milliseconds (ms). It represents the length of the track in time.'
+    }
 
-    # Search for a track
-    track_name = st.text_input("Enter a Track Name", placeholder="Runaway",value="Runaway")
-    search_results = sp.search(q=track_name, type='track', limit=1)
 
-    if search_results and search_results['tracks']['items']:
-        track = search_results['tracks']['items'][0]
-        # Get album information
-        # st.write(track)
-        album_info = sp.album(track['album']['id'])
-        track_id = track['id']
-        cols = st.columns([5,4])
+    
+    st.subheader("Know about your favourite Song Features which are otherwise Unknown!", divider="rainbow" )
 
-        with cols[0]:
-            st.subheader(f"{track['name']} by {', '.join([artist['name'] for artist in track['artists']])}",)
-            #st.code(f"Track: {track['name']} by {', '.join([artist['name'] for artist in track['artists']])}")
-            album_art_url = album_info['images'][0]['url']
-            st.image(album_art_url, width=450)
+    # Streamlit UI
+    song_name = st.text_input("Enter a Track Name", placeholder="Runaway", value="Runaway")
 
-        # Get album art URL
-        with cols[1]:
-            
-            
+    st.divider()
+
+    if song_name:
+        # Search for the song by name
+        query = f"{song_name}"
+
+        # Search for the song by name only
+        results = sp.search(q=query, type='track', limit=1)
+
+        # Check if any tracks were found
+        if results['tracks']['items']:
+            track = results['tracks']['items'][0]
+            track_id = track['id']
+
             # Get audio features for the track
-            audio_features = sp.audio_features([track['uri']])[0]
-            st.code(f"Audio Features for {track['name']}:")
-            st.code(f"Danceability: {audio_features['danceability']}")
-            st.code(f"Energy: {audio_features['energy']}")
-            st.code(f"Tempo: {audio_features['tempo']}")
+            audio_features = sp.audio_features(track_id)
 
-        
-    else:
-        st.warning(f"No track found with the name '{track_name}'")
+            if audio_features:
+                # Extract the relevant audio features
+                features = audio_features[0]
+                feature_names = [
+                    'danceability', 'energy', 'key', 'loudness', 'mode', 
+                    'speechiness', 'acousticness', 'instrumentalness', 
+                    'liveness', 'valence', 'tempo', 'duration_ms'
+                ]
 
+                # Create a list of audio feature values
+                feature_values = [features[feature] for feature in feature_names]
+
+                # Get additional track information
+                artist_id = track['artists'][0]['id']
+                artist_name = track['artists'][0]['name']  # Get the artist name
+                album_name = track['album']['name']
+                album_id = track['album']['id']
+                popularity = track['popularity']
+                explicit = track['explicit']
+                album_cover_url = track['album']['images'][0]['url']
+
+                # Get artist information
+                artist = sp.artist(artist_id)
+                artist_photo_url = artist['images'][0]['url']
+
+                # Store all the information in a dictionary
+                track_info = {
+                    'song_name': song_name,
+                    'artist_name': artist_name,
+                    'album_name': album_name,
+                    'feature_values': feature_values,
+                    'popularity': popularity,
+                    'explicit': explicit,
+                    'album_cover_url': album_cover_url,
+                    'artist_photo_url': artist_photo_url,
+                }
+
+                # st.write(track_info)
+
+
+                cols = st.columns(2)
+
+                with cols[0]:
+
+                    st.markdown(f'''<span style="font-family:'poppins'; font-size:29px; font-weight:bold; color:#1DB954;">{track_info['song_name']}</span>''',unsafe_allow_html=True)
+                    st.image(track_info["album_cover_url"], width=400, caption=f'{track_info["album_name"]}')
+
+                with cols[1]:
+                    st.markdown(f'''<span style="font-family:'poppins'; font-size:25px; font-weight:bold;"> By {track_info["artist_name"]}</span>''',unsafe_allow_html=True)
+                    st.image(track_info["artist_photo_url"], width=300, caption=f'')
+                    st.markdown(f'''<span style="font-family:'poppins'; font-size:20px;">Song Popularity</span><span style="font-family:'poppins'; font-size:30px; font-weight:bold; color:#1DB954;">  {track_info["popularity"]}</span>''',unsafe_allow_html=True)
+                    
+                    # st.code(top_track_dict['Explicit'])
+                    if not track_info['explicit']:
+                        explicit = "No"
+                    else:
+                        explicit = "Yes"
+
+                    st.markdown(f'''<span style="font-family:'poppins'; font-size:20px;">Explicit?</span><span style="font-family:'poppins'; font-size:30px; font-weight:bold; color:#1DB954;">  {explicit}</span>''',unsafe_allow_html=True)
+                    
+
+                st.divider()
+                st.subheader("Audio Features", divider="green")
+                # Split the features into two columns
+                cols = st.columns(2)
+
+                with cols[0]:
+                    # Display the first 6 features in the first column
+                    for feature_name, feature_value in zip(feature_names[:6], feature_values[:6]):
+                        st.markdown(f'''<span style="font-family: poppins; font-size:25px; font-weight:bold;">{feature_name.capitalize()} - </span><span style="font-family:'poppins'; font-size:35px; font-weight:bold; color:#1DB954;">{feature_value}</span>''', unsafe_allow_html=True)
+                        expander = st.expander(f"{feature_name.capitalize()}")
+                        expander.info(f'''{audio_feature_descriptions[feature_name]}''',icon="ℹ️")
+
+                with cols[1]:
+                    # Display the remaining 6 features in the second column
+                    for feature_name, feature_value in zip(feature_names[6:], feature_values[6:]):
+                        st.markdown(f'''<span style="font-family: poppins; font-size:25px; font-weight:bold;">{feature_name.capitalize()} - </span><span style="font-family:'poppins'; font-size:35px; font-weight:bold; color:#1DB954;">{feature_value}</span>''', unsafe_allow_html=True)
+                        expander = st.expander(f"{feature_name.capitalize()}")
+                        expander.info(f'''{audio_feature_descriptions[feature_name]}''',icon="ℹ️")
 
 # main interface -- app starts here
 def main_cs():
@@ -154,7 +238,7 @@ def main_cs():
     """
     <style>
         section[data-testid="stSidebar"] {
-            width: 500px !important; # Set the width to your desired value
+            width: 400px !important; # Set the width to your desired value
         }
     </style>
     """,
@@ -231,6 +315,61 @@ def main_cs():
 
                 st.divider()
 
+        elif options == "Compare Playlists":
+
+            st.markdown(
+            """
+            <style>
+                section[data-testid="stSidebar"] {
+                    width: 300px !important; # Set the width to your desired value
+                }
+            </style>
+            """,
+            unsafe_allow_html=True)
+
+            cols = st.columns(2)
+
+            with cols[0]:
+                username = st.text_input("Enter UserName: ", value="", placeholder="nocturnel99", key="user1")
+                
+                expander = st.expander("Spotify Usernames are not what you think! See this!", expanded=False)
+                
+                with expander:
+                    st.error("This is not the Username!")
+                    st.image("./assets/spotify-wrong-username.png")
+                    st.success("This is your username!")
+                    st.image("./assets/spotify-right-username.png")
+
+
+                if username != "":
+                    analyse_playlist_variability(sp, username)
+
+                else:
+                    st.warning("Enter a username-1!")
+
+                    st.divider()
+
+            with cols[1]:
+                username = st.text_input("Enter UserName: ", value="", placeholder="nocturnel99", key="user2")
+                
+                expander = st.expander("Spotify Usernames are not what you think! See this!", expanded=False)
+                
+                with expander:
+                    st.error("This is not the Username!")
+                    st.image("./assets/spotify-wrong-username.png")
+                    st.success("This is your username!")
+                    st.image("./assets/spotify-right-username.png")
+
+
+                if username != "":
+                    analyse_playlist_variability(sp, username)
+
+                else:
+                    st.warning("Enter a username-2!")
+
+                    st.divider()
+
+
 
 
 
@@ -252,11 +391,31 @@ def main_cs():
         expander.image("./info/image-2.png")
 
 
+    
+
+
+
+
 if __name__ == '__main__':
 
     st.set_page_config(page_title="spotify dash", layout="wide", initial_sidebar_state="auto")
 
     main_cs()
+
+    st.sidebar.markdown('''
+    <center>
+        <span style="font-family: 'Circular Std'; font-size: 30px;">
+            Spotify <span style="font-family:'manrope';display: inline-block; width: 300px; height: 25px; line-height: 20px; background-color: #f0f0f0; border: 2px solid #000; text-align: center; border-radius: 10px; font-size: 15px;">A Different Perspective</span>
+        </span>
+    </center>
+''', unsafe_allow_html=True)
+
+
+
+
+    
+
+    
 
     
 

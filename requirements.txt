@@ -6,3 +6,4 @@ streamlit-extras
 seaborn 
 plotly 
 altair
+numpy

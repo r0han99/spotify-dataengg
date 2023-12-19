@@ -1,7 +1,9 @@
 import streamlit as st 
 from streamlit_extras.app_logo import add_logo
 import pandas as pd
+import numpy as np 
 import time
+import random
 
 # for spotify 
 import spotipy
@@ -79,7 +81,7 @@ def analyse_playlist_variability(sp, username):
     # Get songs from a specific playlist
 
     
-
+    
     playlist_id = st.text_input('\nEnter the playlist ID to get songs from: ')
     
     
@@ -91,8 +93,6 @@ def analyse_playlist_variability(sp, username):
         
         results = sp.playlist_tracks(playlist_id)
 
-
-        
         
         with st.status('Songs in the playlist:') as status:
             for track in results['items']:
