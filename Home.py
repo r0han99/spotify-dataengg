@@ -311,6 +311,8 @@ def main_cs():
 
         elif options == "Current Trends":
             _, aws_keys = load_keys()
+
+            
     
             display_current_trends(aws_keys)
 

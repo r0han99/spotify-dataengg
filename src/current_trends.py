@@ -8,8 +8,6 @@ import boto3
 import pandas as pd
 
 
-
-
 def display_current_trends(aws_keys):
 
     AWS_Service, AWS_S3_bucket_name, AWS_Access_key, AWS_Secret_Access_key, AWS_User, AWS_FOLDER, BUCKET_NAME = aws_keys
