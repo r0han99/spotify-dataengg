@@ -51,7 +51,7 @@ To make the most of the Spotify Analytics App, follow these simple steps:
 
 ## Project Workflow Architecture 
 
-![architecture](assets/updated_architecture.png)
+![architecture](assets/architecture_update.png)
 
 
 ### Data Retrieval and Processing
