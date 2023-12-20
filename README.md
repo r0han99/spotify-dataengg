@@ -76,7 +76,11 @@ For robust data storage and accessibility, **AWS S3** serves as the repository f
   
 - **Automation:** Leverages Apache Airflow for systematic scheduling and daily refresh of the top 50 songs list.
 
+![airflow-exec](./assets/Airflow-Running.png)
+
 - **Cloud Storage:** AWS S3 serves as a reliable and scalable cloud storage solution for the project.
+
+![s3](./assets/S3%20Bucket%20name.png)
 
 - **User Interaction:** Employs Streamlit to create an intuitive and interactive platform, providing users with a seamless way to explore and interpret their music statistics.
 
