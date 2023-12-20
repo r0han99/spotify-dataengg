@@ -20,7 +20,7 @@ with open("./info/about.md", 'r') as f:
     contents = f.read()
 
 st.markdown(contents)
-st.image('./assets/architecture.png')
+st.image('./assets/updated_architecture.png')
 
 
 rest_of_the_content = '''

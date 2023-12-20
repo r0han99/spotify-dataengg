@@ -51,6 +51,9 @@ To make the most of the Spotify Analytics App, follow these simple steps:
 
 ## Project Workflow Architecture 
 
+![architecture](assets/updated_architecture.png)
+
+
 ### Data Retrieval and Processing
 
 The project begins with data retrieval facilitated by the **SPOTIPY** library in Python. Leveraging this powerful library, the required information is fetched in JSON format, which is then meticulously transformed into a readable data structure.
